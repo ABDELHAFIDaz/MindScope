@@ -219,9 +219,3 @@ prepare_data → preprocess → train_model → evaluate_model
 ## 🧰 Tech Stack
 
 Python · pandas · NumPy · scikit-learn · imbalanced-learn · XGBoost · matplotlib · seaborn · joblib · Apache Airflow · Streamlit · Docker
-
----
-
-## 👤 Author
-
-**Abdelhafid Azlig** — Mock jury project (individual work, 09/11/2026 → 14/11/2026).
