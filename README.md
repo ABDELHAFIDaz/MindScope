@@ -1,4 +1,4 @@
-# 🧠 NeuroVision — Student Mental Health Risk Prediction
+# 🧠 MindScope — Student Mental Health Risk Prediction
 
 > End-to-end Data Science project that analyzes student well-being data and builds a supervised classification prototype to estimate mental health risk levels — from data audit to an Airflow-orchestrated pipeline and an interactive Streamlit app.
 
@@ -59,7 +59,7 @@ An educational institution wants to study the factors associated with student we
 ## 🗂️ Project Structure
 
 ```
-NeuroVision/
+MindScope/
 ├── app/                    # Streamlit application
 │   └── streamlit_app.py
 ├── dag/                    # Airflow DAG(s)
@@ -131,8 +131,8 @@ Key risk factors identified: *(top features)*.
 ### Option 1 — Docker (recommended)
 
 ```bash
-git clone https://github.com/ABDELHAFIDaz/NeuroVision.git
-cd NeuroVision
+git clone https://github.com/ABDELHAFIDaz/MindScope.git
+cd MindScope
 docker compose --env-file docker.env up --build
 ```
 
@@ -146,8 +146,8 @@ Services (check `docker-compose.yml` for the exact ports):
 ### Option 2 — Local environment
 
 ```bash
-git clone https://github.com/ABDELHAFIDaz/NeuroVision.git
-cd NeuroVision
+git clone https://github.com/ABDELHAFIDaz/MindScope.git
+cd MindScope
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -219,9 +219,3 @@ prepare_data → preprocess → train_model → evaluate_model
 ## 🧰 Tech Stack
 
 Python · pandas · NumPy · scikit-learn · imbalanced-learn · XGBoost · matplotlib · seaborn · joblib · Apache Airflow · Streamlit · Docker
-
----
-
-## 👤 Author
-
-**Abdelhafid Azlig** — Mock jury project (individual work, 09/11/2026 → 14/11/2026).
