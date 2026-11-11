@@ -7,7 +7,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder
 
 TARGET = "Mental_Health_Risk"
 ID_COL = "Student_ID"
@@ -23,14 +23,13 @@ def load_data(path):
 
 
 def split_data(df, test_size=0.2, random_state=RANDOM_STATE):
-    """Stratified train/test split (80/20 by default)."""
     X = df.drop(columns=[TARGET])
     y = df[TARGET]
     return train_test_split(X, y, test_size=test_size, stratify=y, random_state=random_state)
 
 
 class IQRCapper(OneToOneFeatureMixin, BaseEstimator, TransformerMixin):
-    """Cap the values outside [Q1 - k*IQR, Q3 + k*IQR]. Bounds are learned on the training data only."""
+    #Cap the values outside [Q1 - k*IQR, Q3 + k*IQR]. Bounds are learned on the training data only
 
     def __init__(self, factor=1.5):
         self.factor = factor
@@ -51,27 +50,37 @@ class IQRCapper(OneToOneFeatureMixin, BaseEstimator, TransformerMixin):
 
 
 def build_preprocessor(X):
-    """Imputation + outlier capping + scaling for numbers, imputation + one-hot for categories."""
+    #Imputation + outlier capping + scaling for numbers, imputation + one-hot for categories
     num_cols = X.select_dtypes(include="number").columns.tolist()
-    cat_cols = X.select_dtypes(exclude="number").columns.tolist()
+    ordinal_categories = {
+        "Year_of_Study": [1, 2, 3, 4, 5],
+        "Physical_Activity": ["Low", "Moderate", "High"],
+        "Diet_Quality": ["Poor", "Average", "Good"],
+    }
+    ordinal_columns = list(ordinal_categories)
+    nominal_columns = ["Gender", "Part_Time_Job", "Previous_Mental_Health_History"]    
 
     num_pipe = Pipeline([
         ("imputer", SimpleImputer(strategy="median")),
         ("capper", IQRCapper()),
         ("scaler", StandardScaler()),
     ])
-    cat_pipe = Pipeline([
+    nominal_pipe = Pipeline([
         ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
+        ("hot_encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
+    ])
+    ordinal_pipe = Pipeline([
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("ordinal_encoder", OrdinalEncoder(categories=list(ordinal_categories.values())))
     ])
     return ColumnTransformer(
-        [("num", num_pipe, num_cols), ("cat", cat_pipe, cat_cols)],
+        [("num", num_pipe, num_cols), ("hot", nominal_pipe, nominal_columns), ("ordinal", ordinal_pipe, ordinal_columns)],
         sparse_threshold=0,
     )
 
 
 def build_pipeline(model, X, use_smote=False):
-    """Full pipeline: preprocessing, optional SMOTE (only applied when fitting) and the model."""
+    #Full pipeline: preprocessing, optional SMOTE (only applied when fitting) and the model
     steps = [("preprocessor", build_preprocessor(X))]
     if use_smote:
         steps.append(("smote", SMOTE(random_state=RANDOM_STATE)))
