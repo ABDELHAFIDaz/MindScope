@@ -15,7 +15,6 @@ RANDOM_STATE = 42
 
 
 def load_data(path):
-    """Load the csv, remove duplicates, rows without target and the ID column."""
     df = pd.read_csv(path)
     df = df.drop_duplicates()
     df = df.dropna(subset=[TARGET])
