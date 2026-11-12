@@ -50,10 +50,9 @@ class IQRCapper(OneToOneFeatureMixin, BaseEstimator, TransformerMixin):
 
 
 def build_preprocessor(X):
-    #Imputation + outlier capping + scaling for numbers, imputation + one-hot for categories
-    num_cols = X.select_dtypes(include="number").columns.tolist()
+    #Imputation + outlier capping + scaling for numbers, imputation + one-hot & ordinal for categories
+    numerical_columns = X.select_dtypes(include="number").columns.tolist()
     ordinal_categories = {
-        "Year_of_Study": [1, 2, 3, 4, 5],
         "Physical_Activity": ["Low", "Moderate", "High"],
         "Diet_Quality": ["Poor", "Average", "Good"],
     }
@@ -71,10 +70,11 @@ def build_preprocessor(X):
     ])
     ordinal_pipe = Pipeline([
         ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("ordinal_encoder", OrdinalEncoder(categories=list(ordinal_categories.values())))
+        ("ordinal_encoder", OrdinalEncoder(categories=list(ordinal_categories.values()))),
+        ('scaler', StandardScaler())
     ])
     return ColumnTransformer(
-        [("num", num_pipe, num_cols), ("hot", nominal_pipe, nominal_columns), ("ordinal", ordinal_pipe, ordinal_columns)],
+        [("num", num_pipe, numerical_columns), ("hot", nominal_pipe, nominal_columns), ("ordinal", ordinal_pipe, ordinal_columns)],
         sparse_threshold=0,
     )
 
