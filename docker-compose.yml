@@ -1,0 +1,27 @@
+services:
+  airflow:
+    build: .
+    image: mindscope
+    command: airflow standalone
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /app/dag
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
+    volumes:
+      - .:/app
+      - airflow_home:/opt/airflow
+
+  streamlit:
+    build: .
+    image: mindscope
+    command: streamlit run app/streamlit_app.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+
+volumes:
+  airflow_home:
