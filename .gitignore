@@ -58,11 +58,7 @@ data/raw/*
 data/interim/
 
 # ---------- Models ----------
-# The final trained pipeline (.joblib / .pkl) MUST be committed (deliverable).
-# Only ignore experiment leftovers and temporary files.
-models/tmp/
-models/*.tmp
-models/experiments/
+models/*
 
 # ---------- Reports ----------
 # Keep final figures; ignore scratch outputs.
